@@ -9,4 +9,4 @@ const routerUser = express.Router();
 routerUser.post("/signup", validateSignup(signupValidation), signup);
 routerUser.post("/signin", validateSigin(signinValidation), signin);
 
-export default routerUser;
+export default routerUser; 
