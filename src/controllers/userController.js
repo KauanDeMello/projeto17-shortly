@@ -20,4 +20,4 @@ export const signup = async (req, res) => {
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
-  };
+  }; 
