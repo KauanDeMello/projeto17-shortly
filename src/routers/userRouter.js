@@ -1,9 +1,12 @@
 import express from "express"
-import { validateSignup } from "../middleware/userMiddleware.js"
-import { signup } from "../controllers/userController.js"
+import { validateSignup, validateSigin } from "../middleware/userMiddleware.js"
+import { signup, signin } from "../controllers/userController.js"
+import { signinValidation } from "../schemas/signinSchema.js";
+import {signupValidation} from "../schemas/signupSchema.js"
 
-const router = express.Router();
+const routerUser = express.Router();
 
-router.post("/signup", validateSignup, signup);
+routerUser.post("/signup", validateSignup(signupValidation), signup);
+routerUser.post("/signin", validateSigin(signinValidation), signin);
 
-export default router;
+export default routerUser;
