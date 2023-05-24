@@ -67,3 +67,32 @@ export const redirectToUrl = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+export const deleteUrl = async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.user;
+
+  try {
+    if (!req.headers.authorization || !req.headers.authorization.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Credenciais inválidas." });
+    }
+
+    const result = await db.query("SELECT * FROM urls WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "A URL não foi encontrada." });
+    }
+
+    const url = result.rows[0];
+
+    if (url.user_id !== userId) {
+      return res.status(401).json({ error: "Você não tem permissão para excluir esta URL." });
+    }
+
+    await db.query("DELETE FROM urls WHERE id = $1", [id]);
+
+    return res.status(204).end();
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
