@@ -27,3 +27,21 @@ export const shortenUrl = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+export const getUrlById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await db.query("SELECT * FROM urls WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "A URL não foi encontrada." });
+    }
+
+    const { id: urlId, shortUrl, url } = result.rows[0];
+    return res.status(200).json({ id: urlId, shortUrl, url });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
