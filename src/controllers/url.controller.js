@@ -96,3 +96,67 @@ export const deleteUrl = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+
+export const getUserProfile = async (req, res) => {
+  const { userId } = req.user;
+
+  try {
+    
+    const userQuery = await db.query("SELECT id, name FROM users WHERE id = $1", [userId]);
+    const user = userQuery.rows[0];
+
+    
+    const visitCountQuery = await db.query("SELECT SUM(visit_count) as total_visits FROM urls WHERE user_id = $1", [userId]);
+    const totalVisits = visitCountQuery.rows[0].total_visits || 0;
+
+   
+    const urlsQuery = await db.query("SELECT id, short_url, original_url, visit_count FROM urls WHERE user_id = $1", [userId]);
+    const shortenedUrls = urlsQuery.rows;
+
+    
+    const userProfile = {
+      id: user.id,
+      name: user.name,
+      visitCount: totalVisits,
+      shortenedUrls: shortenedUrls.map(url => ({
+        id: url.id,
+        shortUrl: url.short_url,
+        url: url.original_url,
+        visitCount: url.visit_count
+      }))
+    };
+
+    
+    return res.status(200).json(userProfile);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export const getTopUsers = async (req, res) => {
+  try {
+    // Consulta SQL para obter os 10 principais usuários ordenados pela soma de visitas
+    const query = `
+      SELECT users.id, users.name, COALESCE(SUM(urls.visit_count), 0) as total_visits
+      FROM users
+      LEFT JOIN urls ON users.id = urls.user_id
+      GROUP BY users.id
+      ORDER BY total_visits DESC
+      LIMIT 10
+    `;
+
+    const result = await db.query(query);
+
+    // Formatar a resposta
+    const topUsers = result.rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      totalVisits: row.total_visits
+    }));
+
+    return res.status(200).json(topUsers);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
