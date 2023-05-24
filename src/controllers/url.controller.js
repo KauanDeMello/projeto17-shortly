@@ -45,3 +45,25 @@ export const getUrlById = async (req, res) => {
   }
 };
 
+export const redirectToUrl = async (req, res) => {
+  const { shortUrl } = req.params;
+
+  try {
+    const result = await db.query("SELECT * FROM urls WHERE shortUrl = $1", [shortUrl]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "A URL não foi encontrada." });
+    }
+
+    const { id, url, visitCount } = result.rows[0];
+    const updatedVisitCount = visitCount + 1;
+
+    // Atualiza a contagem de visitas no banco de dados
+    await db.query("UPDATE urls SET visitCount = $1 WHERE id = $2", [updatedVisitCount, id]);
+
+    // Redireciona o usuário para a URL original
+    return res.redirect(url);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
