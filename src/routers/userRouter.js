@@ -1,12 +1,16 @@
+import { Router } from "express"
 
-import { validateSignup, validateSigin } from "../middleware/userMiddleware.js"
-import { signup, signin } from "../controllers/userController.js"
-import { signinValidation } from "../schemas/signinSchema.js";
-import {signupValidation} from "../schemas/signupSchema.js"
+import {signin, signup} from "../controllers/userController.js"
+import validateSignin from "../middleware/signin.Middlware.js"
 
-const routerUser = Router();
 
-routerUser.post("/signup", validateSignup(signupValidation), signup);
-routerUser.post("/signin", validateSigin(signinValidation), signin);
+import validateSignup from "../middleware/signup.Middleware.js"
 
-export default routerUser; 
+
+
+const routerUser = Router()
+
+routerUser.post("/singin", validateSignin,signin)
+routerUser.post("/singup", validateSignup,signup)
+
+export default routerUser 

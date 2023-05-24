@@ -1,4 +1,3 @@
-import joi from "joi"
 import {signupValidation} from "../schemas/signupSchema.js"
 
 export const validateSignup = (req, res, next) => {
@@ -10,3 +9,6 @@ export const validateSignup = (req, res, next) => {
   
     next();
   };
+
+
+  export default validateSignup;

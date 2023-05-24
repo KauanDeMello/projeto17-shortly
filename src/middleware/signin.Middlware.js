@@ -1,4 +1,4 @@
-import { signinValidation } from "./signinSchema.js";
+import { signinValidation } from "../schemas/signinSchema.js";
 
 export const validateSignin = (req, res, next) => {
   const { error } = signinValidation.validate(req.body);
@@ -9,3 +9,5 @@ export const validateSignin = (req, res, next) => {
 
   next();
 };
+
+export default validateSignin;

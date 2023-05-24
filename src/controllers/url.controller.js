@@ -1,12 +1,12 @@
-import { db } from "../database.connections.js";
+import {db} from "../database/database.connection.js"
 import { nanoid } from "nanoid";
 
 export const shortenUrl = async (req, res) => {
-  const { url } = req.body;
-  const { userId } = req.user; 
-
   try {
-    
+    const { url } = req.body;
+    const { userId } = req.user;
+
+   
     if (!req.headers.authorization || !req.headers.authorization.startsWith("Bearer ")) {
       return res.status(401).json({ error: "Credenciais inválidas." });
     }
